@@ -7,14 +7,14 @@ from random import randint
 
 
 def save_image(image, image_name):
-    output_name = str(image_name).replace('data/', '')
+    output_name = str(image_name).replace('input/', '')
     output_name = str(randint(1, 10000)) + output_name
     image.save('output/' + output_name)
 
 
 def main():
     top_line, bottom_line = generate_text()
-    image, image_name = write_text_to_image(top_line, bottom_line, 'data/futurama_fry.jpg')
+    image, image_name = write_text_to_image(top_line, bottom_line, 'input/futurama_fry.jpg')
     save_image(image, image_name)
 
 
