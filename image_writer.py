@@ -3,20 +3,24 @@ style.
 """
 
 from PIL import Image, ImageDraw, ImageFont
-from random import randint
+
+TEXT_COLOR = (255, 255, 255)
+SPACING = 10
+FONT = ImageFont.truetype('impact.ttf', 60)
+# Spacing and font are temporary constants that will likely be modified as I add in functionality for text
+# resizing/wrapping.
 
 
 def write_text_to_image(text_top, text_bottom, image_name):
     """Main function. Writes inputted text to image in 'meme' style"""
     image = _import_image(image_name)
     # processed_image = _process_image
-    font, text_color, spacing = _determine_text_attributes()
     draw = ImageDraw.Draw(image)
-    text_top_x, text_top_y, text_bottom_x, text_bottom_y = _determine_text_placement(draw, image, font, text_top,
+    text_top_x, text_top_y, text_bottom_x, text_bottom_y = _determine_text_placement(draw, image, FONT, text_top,
                                                                                      text_bottom)
-    _draw_image(draw, text_top, font, text_color, text_top_x, text_top_y, spacing)
-    _draw_image(draw, text_bottom, font, text_color, text_bottom_x, text_bottom_y, spacing)
-    _save_image(image, image_name)
+    _draw_image(draw, text_top, FONT, TEXT_COLOR, text_top_x, text_top_y, SPACING)
+    _draw_image(draw, text_bottom, FONT, TEXT_COLOR, text_bottom_x, text_bottom_y, SPACING)
+    return image
 
 
 def _import_image(image_name):
@@ -30,21 +34,24 @@ def _import_image(image_name):
 #     return image
 
 
-def _determine_text_attributes():
-    """Sets attributes for proper 'meme' style text"""
-    font = ImageFont.truetype('impact.ttf', 60)
-    text_color = (255, 255, 255)
-    spacing = 10
-    return font, text_color, spacing
-
-
 def _determine_text_placement(draw, image, font, text_top, text_bottom):
     """Measures image and text blocks and determines where to place each."""
     image_w, image_h = _measure_image(image)
     text_top_w, text_top_h = _measure_text(draw, text_top, font)
     text_bottom_w, text_bottom_h = _measure_text(draw, text_bottom, font)
+    text_top_x, text_top_y, text_bottom_x, text_bottom_y = _calculate_coords(image_w, image_h, text_top_w, text_top_h,
+                                                                             text_bottom_w, text_bottom_h)
+    return text_top_x, text_top_y, text_bottom_x, text_bottom_y
+
+
+def _calculate_coords(image_w, image_h, text_top_w, text_top_h, text_bottom_w, text_bottom_h):
+    """Inputs image and text block dimensions and returns top-left x and y coordinates for placement of both texts.
+
+    >>> _calculate_coords(100, 100, 10, 5, 15, 5)
+    (45, 4, 43, 86)
+    """
     text_top_x, text_top_y = image_w // 2 - text_top_w // 2, image_h // 16 - text_top_h // 2
-    text_bottom_x, text_bottom_y = image_w // 2 - text_bottom_w // 2,  image_h // 12 * 11 - text_bottom_h // 2
+    text_bottom_x, text_bottom_y = image_w // 2 - text_bottom_w // 2, image_h // 12 * 11 - text_bottom_h // 2
     return text_top_x, text_top_y, text_bottom_x, text_bottom_y
 
 
@@ -71,10 +78,3 @@ def _add_border_to_text(draw, x, y, text, font, spacing):
     draw.multiline_text((x + 3, y - 3), text, font=font, fill=border_color, spacing=spacing)
     draw.multiline_text((x - 3, y + 3), text, font=font, fill=border_color, spacing=spacing)
     draw.multiline_text((x + 3, y + 3), text, font=font, fill=border_color, spacing=spacing)
-
-
-def _save_image(image, image_name):
-    """Saves image."""
-    random_number = str(randint(1, 10000))
-    save_name = random_number + '_' + image_name
-    return image.save(save_name)
