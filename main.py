@@ -4,11 +4,14 @@ from text_generator import generate_text
 from image_writer import write_text_to_image
 from PIL import Image
 from random import randint
+from os import path, makedirs
 
 
 def save_image(image, image_name):
     output_name = str(image_name).replace('input/', '')
     output_name = str(randint(1, 10000)) + output_name
+    if not path.exists('output'):
+        makedirs('output')
     image.save('output/' + output_name)
 
 
