@@ -78,3 +78,9 @@ def _add_border_to_text(draw, x, y, text, font, spacing):
     draw.multiline_text((x + 3, y - 3), text, font=font, fill=border_color, spacing=spacing)
     draw.multiline_text((x - 3, y + 3), text, font=font, fill=border_color, spacing=spacing)
     draw.multiline_text((x + 3, y + 3), text, font=font, fill=border_color, spacing=spacing)
+
+
+def _fit_text_to_image(image, text_top, text_bottom):
+    image_w, image_h = _measure_image(image)
+    text_top_w, text_top_h = _measure_text(draw, text_top, font)
+    text_bottom_w, text_bottom_h = _measure_text(draw, text_bottom, font)
