@@ -16,19 +16,29 @@ class MemeGeneratorApiHandler:
         self._password = password
 
     def _get_request_url(self, action, params=''):
-        """ String builder for API endpoints """
+        """ String builder for API endpoints
+
+        >>> a = MemeGeneratorApiHandler('nobody', 'password')
+        >>> a._get_request_url('Nothing', {'foo': 'bar'})
+        'http://version1.api.memegenerator.net?foo=bar'
+        """
         url = 'http://{}/{}'.format(
             'version1.api.memegenerator.net',
             action
         )
 
-        for i, param in enumerate(params):
+        for param in params:
             url = self._add_url_param(url, param, params[param])
 
         return url
 
     def _add_url_param(self, url, name, val):
-        """ adds a parameter to the URL string """
+        """ adds a parameter to the URL string
+
+        >>> a = MemeGeneratorApiHandler('', '')
+        >>> a._add_url_param('http://example.com/', 'foo', 'bar')
+        'http://version1.api.memegenerator.net?foo=bar'
+        """
         delim = '&' if '?' in url else '?'
         param = '{}{}={}'.format(delim, name, val)
         return url + param
