@@ -1,16 +1,19 @@
-"""Generates a random gender and gender descriptor."""
-import random
+""" Opens a sample file from a .txt file, imports a markov chain class, and then uses it to generate random text."""
 
-def generate_text():
-    """Generates random text."""
-    descriptor = 'Androgynous Anti Butch Chibi Celestial Cisgender Crypto Dandy \
-    Dysphoric Demi Drag Eggy Fake Femme Fiendish Flirtacious Genderfluid Genderpunk \
-    Genderqueer Glass Hard High Lathargic Lipstick Low Manicured Moon Nonbinary \
-    Nonconforming Questioning Secure Soft Sparkle Spooky Sporty Sun Transfemmenine \
-    Transgender Transmasculine Trash Witchy'.split()
 
-    gender= 'Agender Abimegender Absorgender Androgyne Bear Bigender Boy Dameon \
-    Eater Gem Genderqueer Ghost Girl God Goddess Goth Hologram Man Neutrois \
-    Otherkin Pangender Screaming Skeleton Twink Trash Woman'.split()
+import markov_chain
 
-    return ('This is a meme about a {} {}'.format(random.choice(descriptor), random.choice(gender)))
+
+def output(markov):
+    top = (markov.generate_top_text()).capitalize()
+    bottom = (markov.generate_bottom_text()).capitalize()
+    meme_words = [top, bottom]
+    print(meme_words)
+
+def main():
+    file = open('sample.txt')
+    markov = markov_chain.Markov(file)
+    output(markov)
+
+if __name__ == '__main__':
+    main()
