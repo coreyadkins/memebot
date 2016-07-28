@@ -6,21 +6,21 @@ from PIL import Image, ImageDraw, ImageFont
 
 TEXT_COLOR = (255, 255, 255)
 SPACING = 10
-FONT = ImageFont.truetype('impact.ttf', 60)
 # Spacing and font are temporary constants that will likely be modified as I add in functionality for text
 # resizing/wrapping.
 
 
 def write_text_to_image(text_top, text_bottom, image_name):
-def write_text_to_image(text_top, text_bottom, image_name):
     """Main function. Writes inputted text to image in 'meme' style"""
     image = _import_image(image_name)
     # processed_image = _process_image
     draw = ImageDraw.Draw(image)
-    text_top_x, text_top_y, text_bottom_x, text_bottom_y = _determine_text_placement(draw, image, FONT, text_top,
+    font = ImageFont.truetype('impact.ttf', 60)
+    text_top, text_bottom, font = _fit_text_to_image(image, text_top, text_bottom, draw, font)
+    text_top_x, text_top_y, text_bottom_x, text_bottom_y = _determine_text_placement(draw, image, font, text_top,
                                                                                      text_bottom)
-    _draw_image(draw, text_top, FONT, TEXT_COLOR, text_top_x, text_top_y, SPACING)
-    _draw_image(draw, text_bottom, FONT, TEXT_COLOR, text_bottom_x, text_bottom_y, SPACING)
+    _draw_image(draw, text_top, font, TEXT_COLOR, text_top_x, text_top_y, SPACING)
+    _draw_image(draw, text_bottom, font, TEXT_COLOR, text_bottom_x, text_bottom_y, SPACING)
     return image, image_name
 
 
@@ -81,7 +81,38 @@ def _add_border_to_text(draw, x, y, text, font, spacing):
     draw.multiline_text((x + 3, y + 3), text, font=font, fill=border_color, spacing=spacing)
 
 
-def _fit_text_to_image(image, text_top, text_bottom):
+def _fit_text_to_image(image, text_top, text_bottom, draw, font):
     image_w, image_h = _measure_image(image)
     text_top_w, text_top_h = _measure_text(draw, text_top, font)
     text_bottom_w, text_bottom_h = _measure_text(draw, text_bottom, font)
+    top_needs_wrapping = _find_if_needs_wrapping(image_w, text_top_w)
+    bottom_needs_wrapping = _find_if_needs_wrapping(image_w, text_bottom_w)
+    if top_needs_wrapping is True:
+        top_text_wrapped = _shrink_and_wrap_text(draw, text_top, image_w)
+    else:
+        top_text_wrapped = text_top
+    if bottom_needs_wrapping is True:
+        bottom_text_wrapped, font = _shrink_and_wrap_text(draw, text_bottom, image_w)
+    else:
+        bottom_text_wrapped, font = text_bottom
+    return top_text_wrapped, bottom_text_wrapped, font
+
+
+def _find_if_needs_wrapping(image_w, text_w):
+    if text_w >=  image_w // 8 * 7:
+        needs_wrapping = True
+    else:
+        needs_wrapping = False
+    return needs_wrapping
+
+
+def _shrink_and_wrap_text(draw, text, image_w):
+    font = ImageFont.truetype('impact.ttf', 35)
+    new_text_w, new_text_h = _measure_text(draw, text, font)
+    needs_more_wrapping = _find_if_needs_wrapping(image_w, new_text_w)
+    # if needs_more_wrapping is True:
+    #     # write in wrapping feature here.
+    else:
+        text = wrapped_text
+    return wrapped_text, font
+
