@@ -1,4 +1,7 @@
-"""Generates a pseudo-random string of text using a markov chain language model and a text file source ."""
+"""Generates a pseudo-random string of text using a markov chain language model and a text file source .
+
+Sourced from the work of tedlee at github: https://github.com/tedlee/markov
+"""
 
 import random
 
@@ -96,20 +99,8 @@ class Markov(object):
             else:
                 self.cache[key] = [w3]
 
-    def generate_top_text(self, size=(random.randrange(1, 7))):
-        """Generates a phrase from the sample text anywhere between 1 and 6 tokens long."""
-        seed = random.randint(0, self.word_size - 3)
-        seed_word, next_word = self.words[seed], self.words[seed + 1]
-        w1, w2 = seed_word, next_word
-        gen_words = []
-        for i in range(size):
-            gen_words.append(w1)
-            w1, w2 = w2, random.choice(self.cache[(w1, w2)])
-        gen_words.append(w2)
-        return ' '.join(gen_words)
-
-    def generate_bottom_text(self, size=(random.randrange(1, 11))):
-        """Generates a phrase from the sample text anywhere between 1 and 10 tokens long."""
+    def generate_text(self, size):
+        """Generates a phrase from the sample text, it's length is determined by size argument (an int)."""
         seed = random.randint(0, self.word_size - 3)
         seed_word, next_word = self.words[seed], self.words[seed + 1]
         w1, w2 = seed_word, next_word
