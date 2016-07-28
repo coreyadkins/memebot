@@ -76,3 +76,4 @@ wcwidth==0.1.7
 wheel==0.24.0
 xdiagnose==3.6.3build2
 xkit==0.0.0
+requests==2.10.0

@@ -3,7 +3,7 @@
  Loads corpus data from MemeGenerator.net API
  """
 
-import urllib.request
+import requests
 import json
 
 
@@ -15,44 +15,14 @@ class MemeGeneratorApiHandler:
         self._username = username
         self._password = password
 
-    def _get_request_url(self, action, params=''):
-        """ String builder for API endpoints
-
-        >>> a = MemeGeneratorApiHandler('nobody', 'password')
-        >>> a._get_request_url('Nothing', {'foo': 'bar'})
-        'http://version1.api.memegenerator.net?foo=bar'
-        """
-        url = 'http://{}/{}'.format(
-            'version1.api.memegenerator.net',
-            action
-        )
-
-        for param in params:
-            url = self._add_url_param(url, param, params[param])
-
-        return url
-
-    def _add_url_param(self, url, name, val):
-        """ adds a parameter to the URL string
-
-        >>> a = MemeGeneratorApiHandler('', '')
-        >>> a._add_url_param('http://example.com/', 'foo', 'bar')
-        'http://version1.api.memegenerator.net?foo=bar'
-        """
-        delim = '&' if '?' in url else '?'
-        param = '{}{}={}'.format(delim, name, val)
-        return url + param
-
-    def _load_url_as_json(self, url):
-        """ Loads a URL, returns JSON data as an object
-
-        :return json_data
-        """
-        with urllib.request.urlopen(url) as text:
-            data_str = '\n'.join([line.decode('UTF-8') for line in text])
-
-        data_json = json.loads(data_str)
-        return data_json['result']
+    def _load_action(self, action, params={}):
+        """ Wrapper for API requests """
+        url_str = 'http://{}/{}'.format('version1.api.memegenerator.net', action)
+        url_params = {} if len(params) == 0 else params
+        rq = requests.get(url_str, url_params)
+        data_text = rq.text
+        data_json = json.loads(data_text)['result']
+        return data_json
 
     def _get_ids_from_json(self, meme_list):
         """ Parse out just the IDs from a list of memes
@@ -69,22 +39,24 @@ class MemeGeneratorApiHandler:
         """
         top_maymays = []
         max_results = 24
+
         for i in range(0, total, max_results):
-            fetch_url = self._get_request_url(
-                'Instances_Select_ByPopular',
-                {
-                    'pageIndex': i // max_results,
-                    'pageSize': min(max_results, total - i),
-                    'username': self._username,
-                    'password': self._password
-                }
-            )
+            params = {
+                'pageIndex': i // max_results,
+                'pageSize': min(max_results, total - i),
+                'username': self._username,
+                'password': self._password
+            }
 
             if days is not None:
-                fetch_url = self._add_url_param(fetch_url, {'days': days})
+                params['days'] = days
 
-            url_data = self._load_url_as_json(fetch_url)
-            top_maymays += self._get_ids_from_json(url_data)
+            data_json = self._load_action(
+                'Instances_Select_ByPopular',
+                params
+            )
+
+            top_maymays += self._get_ids_from_json(data_json)
 
         return top_maymays
 
@@ -93,9 +65,8 @@ class MemeGeneratorApiHandler:
 
         :return list(int: generator_id)
         """
-        fetch_url = self._get_request_url('Generators_Select_ByTrending')
-        url_data = self._load_url_as_json(fetch_url)
-        trending_maymays = self._get_ids_from_json(url_data)
+        data_json = self._load_action('Generators_Select_ByTrending')
+        trending_maymays = self._get_ids_from_json(data_json)
         return trending_maymays
 
     def get_meme_detail(self, meme_id):
@@ -103,7 +74,7 @@ class MemeGeneratorApiHandler:
 
         :return JSON: detail
         """
-        fetch_url = self._get_request_url(
+        maymay_detail = self._load_action(
             'Instance_Select',
             {
                 'username': self._username,
@@ -111,8 +82,6 @@ class MemeGeneratorApiHandler:
                 'instanceID': meme_id
             }
         )
-
-        maymay_detail = self._load_url_as_json(fetch_url)
 
         # that's a nice maymay.
         # [(8)D
