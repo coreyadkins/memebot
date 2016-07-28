@@ -20,7 +20,7 @@ def get_bottom_line(markov):
 
 
 def generate_text():
-    file = open('sample.txt')
+    file = open(input/corpus.txt)
     markov = markov_chain.Markov(file)
     top_line = get_top_line(markov)
     bottom_line = get_bottom_line(markov)
