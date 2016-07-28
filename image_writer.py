@@ -20,7 +20,7 @@ def write_text_to_image(text_top, text_bottom, image_name):
                                                                                      text_bottom)
     _draw_image(draw, text_top, FONT, TEXT_COLOR, text_top_x, text_top_y, SPACING)
     _draw_image(draw, text_bottom, FONT, TEXT_COLOR, text_bottom_x, text_bottom_y, SPACING)
-    return image
+    return image, image_name
 
 
 def _import_image(image_name):

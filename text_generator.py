@@ -19,20 +19,9 @@ def get_bottom_line(markov):
     return (markov.generate_text(size)).upper()
 
 
-def output(top, bottom, markov):
-    """Returns a list of two short strings top first, bottom second."""
-    meme_words = [top, bottom]
-    print(meme_words)
-    return meme_words
-
-
-def main():
+def generate_text():
     file = open('sample.txt')
     markov = markov_chain.Markov(file)
     top_line = get_top_line(markov)
     bottom_line = get_bottom_line(markov)
-    return output(top_line, bottom_line, markov)
-
-
-if __name__ == '__main__':
-    main()
+    return top_line, bottom_line
