@@ -13,7 +13,7 @@ def main():
     top_ids = builder.get_popular_meme_ids(500)
     top_memes = [builder.get_meme_detail(x) for x in top_ids]
 
-    write_corpus(top_memes, 'data/mgapi.txt')
+    write_corpus(top_memes, 'input/corpus.txt')
 
 
 def write_corpus(meme_list, path):
