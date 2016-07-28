@@ -13,7 +13,11 @@ def main():
     top_ids = builder.get_popular_meme_ids(500)
     top_memes = [builder.get_meme_detail(x) for x in top_ids]
 
+<<<<<<< HEAD
+    write_corpus(top_memes, 'input/mgapi.txt')
+=======
     write_corpus(top_memes, 'input/corpus.txt')
+>>>>>>> f3b1d3aec3ce6f62a9379b3da31a6a8ed1c623bc
 
 
 def write_corpus(meme_list, path):

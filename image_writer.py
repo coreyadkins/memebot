@@ -12,6 +12,7 @@ FONT = ImageFont.truetype('impact.ttf', 60)
 
 
 def write_text_to_image(text_top, text_bottom, image_name):
+def write_text_to_image(text_top, text_bottom, image_name):
     """Main function. Writes inputted text to image in 'meme' style"""
     image = _import_image(image_name)
     # processed_image = _process_image
