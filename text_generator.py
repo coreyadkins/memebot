@@ -5,8 +5,8 @@ import markov_chain
 
 
 def output(markov):
-    top = (markov.generate_top_text()).capitalize()
-    bottom = (markov.generate_bottom_text()).capitalize()
+    top = (markov.generate_top_text()).upper()
+    bottom = (markov.generate_bottom_text()).upper()
     meme_words = [top, bottom]
     print(meme_words)
 
