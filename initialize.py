@@ -22,6 +22,8 @@ def main():
             initial_d()
         elif task == 'c':
             initialize_corpus()
+        else:
+            task = 'q'
 
 
 def initial_d():
