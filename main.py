@@ -5,6 +5,7 @@ from image_writer import write_text_to_image
 from PIL import Image
 from random import randint
 from os import path, makedirs
+from randomfile import get_random_input_file
 
 
 def save_image(image, image_name):
@@ -17,7 +18,8 @@ def save_image(image, image_name):
 
 def main():
     top_line, bottom_line = generate_text()
-    image, image_name = write_text_to_image(top_line, bottom_line, 'input/futurama_fry.jpg')
+    image_name = get_random_input_file()
+    image = write_text_to_image(top_line, bottom_line, image_name)
     save_image(image, image_name)
 
 

@@ -22,7 +22,7 @@ def write_text_to_image(text_top, text_bottom, image_name):
                 SPACING)
     _draw_image(draw, text_bottom, bottom_font, TEXT_COLOR, text_bottom_x,
                 text_bottom_y, SPACING)
-    return image, image_name
+    return image
 
 
 def _import_image(image_name):
