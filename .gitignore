@@ -10,6 +10,7 @@ venv
 
 # Django Default DB
 db.sqlite3
+db.sqlite3.test
 
 # macOS
 .DS_Store
