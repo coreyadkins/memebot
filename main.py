@@ -5,15 +5,15 @@ from image_writer import write_text_to_image
 from PIL import Image
 from random import randint
 from os import path, makedirs
-from randomfile import get_random_input_file
+from randomfile import get_random_input_file, get_random_output_path
 
 
 def save_image(image, image_name):
-    output_name = str(image_name).replace('input/', '')
-    output_name = str(randint(1, 10000)) + output_name
+    file_name = str(image_name).replace('input/', '')
+    output_name = get_random_output_path(file_name)
     if not path.exists('output'):
         makedirs('output')
-    image.save('output/' + output_name)
+    image.save(output_name)
 
 
 def main():
