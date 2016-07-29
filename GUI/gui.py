@@ -1,50 +1,58 @@
-"""Opens a window and displays two random memes, user clicks meme and vote is saved,
-then window loops with two more random memes.
-
-Currently, just opens a window and displays two static memes and vote clicks do nothing. No loops as of yet.
-
-
-Future goal, click button to open alternate window with top 5 memes displayed.
+"""Class object that opens a "Pic-Battle" or "Hot or Not" style voting window, with two clickable memes
+that collect a vote for the meme clicked and close the window when voted on.
 """
 
 import tkinter as tk
-# import PIL
+import vote
 
+class DankOrStank:
+    """Runs Gui for DankOrStank."""
+    def __init__(self, master, meme_1, meme_2):
+        """Structures window with two entered memes slotted next to each other."""
+        self.master = master
+        self.meme_1 = meme_1
+        self.meme_2 = meme_2
+        frame = tk.Frame(master)
+        master.title("Memebot")
+        master.geometry('900x600')
+        frame.pack()
 
-def memebot_display():
-    window = tk.Tk()
-    frame = tk.Frame(window)
-    window.geometry('900x600')
-    frame.pack()
+        self.label = tk.Label(master, text="Dank or Stank", font=('Times', 40))
+        self.label.pack()
 
-    memebot_text = "MemeBot's Dank Memes"
-    floating_text = tk.Label(window, text=memebot_text)
-    floating_text.pack(fill='both', expand='yes')
-    floating_text.place(x=375, y=5)
+        self.blue_meme = tk.PhotoImage(file=meme_1)
+        self.blue_meme_as_button = tk.Button(
+            frame,
+            compound=tk.TOP,
+            width=375,
+            height=410,
+            image=self.blue_meme,
+            text='Dank!',
+            bg='light blue',
+            command=self.vote_meme_1)
+        self.blue_meme_as_button.pack(side='left', padx=25, pady=40)
+        self.blue_meme_as_button.image = self.blue_meme
 
+        self.red_meme = tk.PhotoImage(file=meme_2)
+        self.red_meme_as_button = tk.Button(
+            frame,
+            compound=tk.TOP,
+            width=375,
+            height=410,
+            image=self.red_meme,
+            text='Dank!',
+            bg='pink',
+            command=self.vote_meme_2)
+        self.red_meme_as_button.pack(side=tk.LEFT, padx=25, pady=40)
+        self.red_meme_as_button.image = self.red_meme
 
-    blue_meme = tk.PhotoImage(file="gui_mock_imgs/bluememe.gif")
-    blue_meme_as_button = tk.Button(frame, compound=tk.TOP, width=375, height=410, image=blue_meme,
-                        text="That's a Dank blue Meme!!", bg='light blue')
-    blue_meme_as_button.pack(side=tk.LEFT, padx=25, pady=40)
-    blue_meme_as_button.image = blue_meme
+    def vote_meme_1(self):
+        """Returns a Vote Object for meme_1"""
+        return vote.MemeVote([self.meme_1], [self.meme_2], [self.meme_1])
+        self.master.quit()
 
+    def vote_meme_2(self):
+        """Returns a Vote Object for meme_2"""
+        return vote.MemeVote([self.meme_1], [self.meme_2], [self.meme_2])
+        self.master.quit()
 
-    blue_button = tk.Button(window, text='Blue meme is so Dank!!', fg='blue')
-    blue_button.pack(side='left', expand='no')
-
-
-    red_meme = tk.PhotoImage(file="gui_mock_imgs/redmeme.gif")
-    red_meme_as_button = tk.Button(frame, compound=tk.TOP, width=375, height=410, image=red_meme,
-                        text="That's a Dank red Meme!", bg='pink')
-    red_meme_as_button.pack(side=tk.LEFT, padx=25, pady=40)
-    red_meme_as_button.image = red_meme
-    red_button = tk.Button(window, text='Red meme is so Dank!', fg='red')
-    red_button.pack(side='right', expand='no')
-
-    window.mainloop()
-
-def main():
-    memebot_display()
-
-main()
