@@ -160,7 +160,7 @@ def _wrap_text(draw, text, font, image_w):
 def _intelli_draw(drawer, text, font, image_w, spacing):
     """Wraps text based measuring against the width of the image
 
-    >>> image = _import_image('test_image.jpg')
+    >>> image = _import_image('input/test_image.jpg')
     >>> _intelli_draw(ImageDraw.Draw(image), 'Sample text that should be wider than the width of this image', ImageFont\
     .truetype('impact.ttf', 50), 360, 5)
     ['Sample text that', 'should be wider', 'than the width of', 'this image']
