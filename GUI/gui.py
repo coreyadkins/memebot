@@ -4,6 +4,7 @@ that collect a vote for the meme clicked and close the window when voted on.
 
 import tkinter as tk
 import vote
+import PIL
 
 class DankOrStank:
     """Runs Gui for DankOrStank."""
@@ -20,31 +21,33 @@ class DankOrStank:
         self.label = tk.Label(master, text="Dank or Stank", font=('Times', 40))
         self.label.pack()
 
-        self.blue_meme = tk.PhotoImage(file=meme_1)
-        self.blue_meme_as_button = tk.Button(
+        left_image = PIL.ImageTk.PhotoImage(PIL.Image.open(meme_1))
+        self.left_meme = tk.PhotoImage(file=left_image)
+        self.left_meme_as_button = tk.Button(
             frame,
             compound=tk.TOP,
             width=375,
             height=410,
-            image=self.blue_meme,
+            image=self.left_meme,
             text='Dank!',
             bg='light blue',
             command=self.vote_meme_1)
-        self.blue_meme_as_button.pack(side='left', padx=25, pady=40)
-        self.blue_meme_as_button.image = self.blue_meme
+        self.left_meme_as_button.pack(side='left', padx=25, pady=40)
+        self.left_meme_as_button.image = self.left_meme
 
-        self.red_meme = tk.PhotoImage(file=meme_2)
-        self.red_meme_as_button = tk.Button(
+        right_image = PIL.ImageTk.PhotoImage(PIL.Image.open(meme_2))
+        self.right_meme = tk.PhotoImage(file=right_image)
+        self.right_meme_as_button = tk.Button(
             frame,
             compound=tk.TOP,
             width=375,
             height=410,
-            image=self.red_meme,
+            image=self.right_meme,
             text='Dank!',
             bg='pink',
             command=self.vote_meme_2)
-        self.red_meme_as_button.pack(side=tk.LEFT, padx=25, pady=40)
-        self.red_meme_as_button.image = self.red_meme
+        self.right_meme_as_button.pack(side=tk.LEFT, padx=25, pady=40)
+        self.right_meme_as_button.image = self.right_meme
 
     def vote_meme_1(self):
         """Returns a Vote Object for meme_1"""
@@ -55,4 +58,3 @@ class DankOrStank:
         """Returns a Vote Object for meme_2"""
         return vote.MemeVote([self.meme_1], [self.meme_2], [self.meme_2])
         self.master.quit()
-
