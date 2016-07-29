@@ -20,7 +20,7 @@ def main():
     top_gens = [builder.get_generator_detail(id, name) for id, name in top_gen_ids]
 
     write_corpus(top_memes, INPUT_DIR + 'corpus.txt')
-    save_generators(top_gens, INPUT_DIR)
+    save_generators(top_gens, INPUT_DIR, prune=True)
 
 
 def write_corpus(meme_list, path):
