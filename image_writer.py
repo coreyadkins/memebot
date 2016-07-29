@@ -53,6 +53,8 @@ def _calculate_coords(image_w, image_h, text_top_w, text_top_h, text_bottom_w,
 
     >>> _calculate_coords(100, 100, 10, 5, 15, 5)
     (45, 4, 43, 86)
+    >>> _calculate_coords(100, 100, 10, 30, 15, 30)
+    (45, 5, 43, 65)
     """
     text_top_x, text_top_y = image_w // 2 - text_top_w // 2, image_h // 16 - text_top_h // 2
     text_bottom_x, text_bottom_y = image_w // 2 - text_bottom_w // 2, image_h // 12 * 11 - text_bottom_h // 2
@@ -108,15 +110,16 @@ def _fit_text_to_image(image, text_top, text_bottom, draw, font):
 def _shrink_and_wrap_text(draw, text, image_w, image_h, normal_font):
     """Tests the text width and applies alterations to make it fit into the image. First shrinking it, then wrapping,
     then shrinking and wrapping."""
-    needs_shrinking = _find_if_needs_fitting(draw, text, normal_font, image_w,
-                                             image_h)
+    text_w, text_h = _measure_text(draw, text, normal_font, SPACING)
+    needs_shrinking = _find_if_needs_fitting(text_w, text_h, image_w, image_h)
     if needs_shrinking is True:
         updated_font = ImageFont.truetype('impact.ttf', 33)
-        needs_wrapping = _find_if_needs_fitting(draw, text, updated_font, image_w,
-                                                image_h)
+        text_w, text_h = _measure_text(draw, text, normal_font, SPACING)
+        needs_wrapping = _find_if_needs_fitting(text_w, text_h, image_w, image_h)
         if needs_wrapping is True:
             wrapped_text = _wrap_text(draw, text, normal_font, image_w)
-            needs_shrinking = _find_if_needs_fitting(draw, wrapped_text, normal_font, image_w, image_h)
+            new_text_w, new_text_h = _measure_text(draw, wrapped_text, normal_font, SPACING)
+            needs_shrinking = _find_if_needs_fitting(new_text_w, new_text_h, image_w, image_h)
             if needs_shrinking is True:
                 wrapped_text = _wrap_text(draw, text, updated_font, image_w)
                 final_font = updated_font
@@ -131,9 +134,16 @@ def _shrink_and_wrap_text(draw, text, image_w, image_h, normal_font):
     return wrapped_text, final_font
 
 
-def _find_if_needs_fitting(draw, text, font, image_w, image_h):
-    """Determines whether the text is too large, returns bool value True if it is."""
-    text_w, text_h = _measure_text(draw, text, font, SPACING)
+def _find_if_needs_fitting(text_w, text_h, image_w, image_h):
+    """Determines whether the text is too large, returns bool value True if it is.
+
+    >>> _find_if_needs_fitting(110, 5, 100, 100)
+    True
+    >>> _find_if_needs_fitting(50, 40, 100, 100)
+    True
+    >>> _find_if_needs_fitting(20, 5, 100, 100)
+    False
+    """
     if text_w > image_w or text_h > image_h // 4:
         needs_fitting = True
     else:
@@ -143,12 +153,17 @@ def _find_if_needs_fitting(draw, text, font, image_w, image_h):
 
 def _wrap_text(draw, text, font, image_w):
     """Wraps text around image width, joins it with new line characters."""
-    wrapped_text = intelli_draw(draw, text, font, image_w, SPACING)
+    wrapped_text = _intelli_draw(draw, text, font, image_w, SPACING)
     return '\n'.join(wrapped_text)
 
 
-def intelli_draw(drawer, text, font, image_w, spacing):
+def _intelli_draw(drawer, text, font, image_w, spacing):
     """Wraps text based measuring against the width of the image
+
+    >>> image = _import_image('test_image.jpg')
+    >>> _intelli_draw(ImageDraw.Draw(image), 'Sample text that should be wider than the width of this image', ImageFont\
+    .truetype('impact.ttf', 50), 360, 5)
+    ['Sample text that', 'should be wider', 'than the width of', 'this image']
 
     Sourced from Caleb Hattingh, at https://mail.python.org/pipermail/image-sig/2004-December/003064.html
     """
