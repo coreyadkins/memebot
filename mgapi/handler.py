@@ -70,9 +70,9 @@ class MemeGeneratorApiHandler:
                 params['days'] = days
 
             data_json = self._load_action('Instances_Select_ByPopular', params)
-            top_maymays += [int(meme['instanceID']) for meme in data_json]
+            for meme in data_json:
+                yield int(meme['instanceID'])
 
-        return top_maymays
 
     def get_meme_detail(self, meme_id):
         """ Get details of meme instanceID

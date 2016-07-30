@@ -47,16 +47,21 @@ def build_corpus(entries):
                                        '0 ').strip()
 
     builder = MemeGeneratorApiHandler(username, 'pdxc0d3gu!ld')
-    top_meme_ids = builder.get_popular_meme_ids(entries)
-    top_memes = [builder.get_meme_detail(x) for x in top_meme_ids]
+    top_instances = []
+    top_generators = {}
+    for inst in builder.get_popular_meme_ids(entries):
+        detail = builder.get_meme_detail(inst)
+        top_instances.append(detail)
 
-    top_gen_ids = set(
-        [(meme['generatorID'], meme['urlName']) for meme in top_memes])
-    top_gens = [builder.get_generator_detail(id, name)
-                for id, name in top_gen_ids]
+        print('ID: {} is {}'.format(inst, detail['displayName']))
+        if not detail['generatorID'] in top_generators.keys():
+            top_generators[detail['generatorID']] = builder.get_generator_detail(
+                detail['generatorID'],
+                detail['urlName']
+            )
 
-    save_corpus(top_memes, INPUT_DIR + 'corpus.txt')
-    save_generators(top_gens, INPUT_DIR, prune=True)
+    save_corpus(top_instances, INPUT_DIR + 'corpus.txt')
+    save_generators(top_generators, INPUT_DIR, prune=True)
 
 
 def save_corpus(meme_list, path):
@@ -74,7 +79,7 @@ def save_generators(generators, path, prune=False):
                       if file.endswith('.jpg')]
     preserve = []
 
-    for keep in generators:
+    for _, keep in generators.items():
         preserve.append(keep['urlName'])
 
         if keep['urlName'] not in existing_names:
