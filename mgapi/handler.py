@@ -52,12 +52,11 @@ class MemeGeneratorApiHandler:
         params.update({'username': self._username, 'password': self._password})
         return params
 
-    def get_popular_meme_ids(self, total, days=None):
+    def get_popular_memes(self, total, days=None):
         """ Returns list of popular meme instances
 
         :return list(int: instance)
         """
-        top_maymays = []
         max_results = 24
 
         for i in range(0, total, max_results):
@@ -70,9 +69,19 @@ class MemeGeneratorApiHandler:
                 params['days'] = days
 
             data_json = self._load_action('Instances_Select_ByPopular', params)
-            top_maymays += [int(meme['instanceID']) for meme in data_json]
+            for item in data_json:
+                meme = {
+                    'instanceID': item['instanceID'],
+                    'generatorID': item['generatorID'],
+                    'urlName': item['urlName'],
+                    'text': [
+                        item[key] for key in item.keys()
+                        if str(key).startswith('text') and item[key] is not None
+                    ],
+                }
 
-        return top_maymays
+                yield meme
+
 
     def get_meme_detail(self, meme_id):
         """ Get details of meme instanceID
