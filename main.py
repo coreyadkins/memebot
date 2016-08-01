@@ -14,7 +14,10 @@ def run_gui(meme_1, meme_2):
 
 def main ():
     image_1 = get_random_input_file(dir='output')
-    image_2 = get_random_input_file(dir='output')
+    image_2 = image_1
+    while image_2 == image_1:
+        image_2 = get_random_input_file(dir='output')
+
     winner = run_gui(image_1, image_2)
     MemeVote().vote(image_1, image_2, winner)
 
