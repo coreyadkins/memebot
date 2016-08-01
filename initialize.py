@@ -143,9 +143,15 @@ def validate_meme_text(text):
     """
     if text is None:
         valid = False
+    elif
+
+        sjw = [x for x in text if x.lower() in ['jew', 'tranny', 'trap', 'muslim', ]
+
+
     else:
         alphas = [x for x in text if x.lower() in 'abcdefghijklmnopqrstuvwxyz']
         valid = len(alphas) > 0
+
 
     return valid
 
