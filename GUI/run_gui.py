@@ -14,6 +14,6 @@ def run_gui(meme_1, meme_2):
 
 def test_main():
     """Just a test running file, because I have no idea how to doctest graphical stuff."""
-    run_gui('gui_mock_imgs/bluememe', 'gui_mock_imgs/redmeme')
+    run_gui('gui_mock_imgs/bluememe.jpg', 'gui_mock_imgs/redmeme.jpg')
 
 test_main()
