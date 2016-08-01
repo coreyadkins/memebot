@@ -5,6 +5,11 @@ from vote.vote import MemeVote
 import os
 import requests
 from operator import itemgetter
+from text_generator import generate_text
+from image_writer import write_text_to_image
+from randomfile import get_random_input_file, get_random_output_path
+
+
 
 INPUT_DIR = 'input/'
 
@@ -61,6 +66,12 @@ def initialize_output():
 
     print('Output directory initialized.')
     print('')
+    for i in range(100):
+        top_line, bottom_line = generate_text()
+        image_name = get_random_input_file()
+        image = write_text_to_image(top_line, bottom_line, image_name)
+        save_image(image, image_name)
+
 
 def deobfuscate(chars):
     """ Deobfuscate creds
@@ -158,7 +169,7 @@ def validate_meme_text(text):
 
 def cull_generators(generators):
     """ Cull generators to the most popular """
-    cull_index = max(len(generators) // 8, 4)
+    cull_index = min(len(generators), 15)
     cull_gens = sorted(
         [
             {'urlName': val['urlName'], 'imageUrl': val['imageUrl'], 'ranking': val['ranking']}
@@ -168,6 +179,13 @@ def cull_generators(generators):
     )[:cull_index]
 
     return cull_gens
+
+def save_image(image, image_name):
+    file_name = str(image_name).replace('input/', '')
+    output_name = get_random_output_path(file_name)
+    if not os.path.exists('output'):
+        os.makedirs('output')
+    image.save(output_name)
 
 if __name__ == '__main__':
     print(main())
