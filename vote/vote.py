@@ -68,7 +68,7 @@ class MemeVote:
         >>> v.vote('beta', 'gamma', 'gamma')
         >>> v.vote('gamma', 'delta', 'gamma')
         >>> v.vote('alpha', 'gamma', 'alpha')
-        >>> v.least_voted(['alpha', 'beta', 'gamma', 'delta', 'omega'])
+        >>> v.get_least_voted(['alpha', 'beta', 'gamma', 'delta', 'omega'])
         ['omega', 'delta']
         """
         searches = [vote['meme1'] + '|' + vote['meme2'] for vote in self.get_votes()]
