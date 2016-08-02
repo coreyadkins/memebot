@@ -1,4 +1,4 @@
-""" Selects some random stuff """
+""" Functions to input or output a random file image path."""
 
 from os.path import splitext, join
 import os
