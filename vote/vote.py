@@ -60,17 +60,6 @@ class MemeVote:
 
         return votes
 
-    def group_by(self, iterable, key):
-        """Place each item in an iterable into a bucket based on calling the key
-        function on the item."""
-        group_to_items = {}
-        for item in iterable:
-            group = key[item]
-            if group not in group_to_items:
-                group_to_items[group] = []
-            group_to_items[group].append(item)
-        return group_to_items
-
     def get_least_voted(self, items, num=2):
         """ Select (num) number of the least-voted instances
 
