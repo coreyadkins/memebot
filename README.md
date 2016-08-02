@@ -39,6 +39,7 @@ or press the red button to quit.
 You'll need to vote quite a few times to get useful data.
 
 
-## Where do I get useful information from it?
+## What's left to be done?
 
-TBD
+* reports
+* improved meme selection
