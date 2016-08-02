@@ -86,8 +86,13 @@ class Markov(object):
         if len(self.words) < 3:
             return
 
-        for i in range(len(self.words) - 2):
-            yield (self.words[i], self.words[i + 1], self.words[i + 2])
+        len_words = len(self.words)
+        for i in range(len_words):
+            yield (
+                self.words[i],
+                self.words[(i + 1) % len_words],
+                self.words[(i + 2) % len_words]
+            )
 
     def database(self):
         """Creates a data base of words from triples and number of words.
@@ -100,13 +105,24 @@ class Markov(object):
                 self.cache[key] = [w3]
 
     def generate_text(self, size):
-        """Generates a phrase from the sample text, it's length is determined by size argument (an int)."""
-        seed = random.randint(0, self.word_size - 3)
-        seed_word, next_word = self.words[seed], self.words[seed + 1]
-        w1, w2 = seed_word, next_word
+        """Generates a phrase from the sample text, its length is determined by size argument (an int)."""
+        random.seed()
+        len_words = len(self.words)
+        seed = random.randint(0, len_words - 1)
+
+        seed_word = self.words[seed]
+        next_word = self.words[(seed + 1) % len_words]
+
+        w1 = seed_word
+        w2 = next_word
         gen_words = []
         for i in range(size):
             gen_words.append(w1)
-            w1, w2 = w2, random.choice(self.cache[(w1, w2)])
+
+            try:
+                w1, w2 = w2, random.choice(self.cache[(w1, w2)])
+            except KeyError:
+                raise KeyError('That KeyError Again')
+
         gen_words.append(w2)
         return ' '.join(gen_words)
