@@ -9,9 +9,9 @@ from text_generator import generate_text
 from image_writer import write_text_to_image
 from randomfile import get_random_input_file, get_random_output_path
 
-
-
 INPUT_DIR = 'input/'
+MAX_INSTANCES = 100
+MAX_GENERATORS = 15
 
 
 def main():
@@ -26,12 +26,8 @@ def main():
 
         if task == 'd':
             initial_d()
-
-        if task == 'c':
+        elif task == 'c':
             initialize_corpus()
-            task = input('Clear output directory [y/n]?')
-            if task == 'y':
-                initialize_output()
         elif task == 'o':
             initialize_output()
         else:
@@ -66,10 +62,13 @@ def initialize_output():
 
     print('Output directory initialized.')
     print('')
-    for i in range(100):
+    for i in range(MAX_INSTANCES):
         top_line, bottom_line = generate_text()
         image_name = get_random_input_file()
         image = write_text_to_image(top_line, bottom_line, image_name)
+        print('Writing to {}:'.format(image_name))
+        print('\t{}'.format(top_line))
+        print('\t{}'.format(bottom_line))
         save_image(image, image_name)
 
 
@@ -87,26 +86,25 @@ def build_corpus(entries):
     """ Build a corpus from the dankest memes and download the top generators """
     builder = MemeGeneratorApiHandler(
         deobfuscate([' 02 ', ' 4r ', 'etsa', ' mk', ' nad ']),
-        deobfuscate([' q', ' rrfn ', 'l '])
-    )
+        deobfuscate([' q', ' rrfn ', 'l ']))
     top_instances = []
     top_generators = {}
     for instance in builder.get_popular_memes(entries, days=7):
         top_instances.append(instance)
 
-        print('ID: {} is {}'.format(instance['instanceID'], instance['urlName']))
+        print('ID: {} is {}'.format(
+            instance['instanceID'],
+            instance['urlName']
+        ))
+
         if instance['generatorID'] not in top_generators.keys():
-            top_generators[instance['generatorID']] = builder.get_generator_detail(
-                instance['generatorID'],
-                instance['urlName']
-            )
+            top_generators[instance[
+                'generatorID']] = builder.get_generator_detail(
+                    instance['generatorID'], instance['urlName'])
 
     save_corpus(top_instances, INPUT_DIR + 'corpus.txt')
-    save_generators(
-        cull_generators(top_generators),
-        INPUT_DIR,
-        prune=True
-    )
+    save_generators(cull_generators(top_generators, MAX_GENERATORS), INPUT_DIR, prune=True)
+    print('')
 
 
 def save_corpus(meme_list, path):
@@ -120,24 +118,27 @@ def save_corpus(meme_list, path):
 
 def save_generators(generators, path, prune=False):
     """ Saves necessary generators, deletes unnecessary """
-    existing_names = [file[:-4] for file in os.listdir(path)
-                      if file.endswith('.jpg')]
-    preserve = []
-    for keep in generators:
-        preserve.append(keep['urlName'])
+    downloaded_gens = [file[:-4] for file in os.listdir(path)
+                       if file.endswith('.jpg')]
 
-        if keep['urlName'] not in existing_names:
+    # which files to keep
+    gens_to_save = []
+    for gen in generators:
+        gens_to_save.append(gen['urlName'])
+
+        if gen['urlName'] not in downloaded_gens:
             # download
-            rq = requests.get(keep['imageUrl'])
-            print('Downloading {} from {}'.format(keep['urlName'], keep[
+            rq = requests.get(gen['imageUrl'])
+            print('Downloading {} from {}'.format(gen['urlName'], gen[
                 'imageUrl']))
-            with open(path + keep['urlName'] + '.jpg', 'wb') as file:
+            with open(path + gen['urlName'] + '.jpg', 'wb') as file:
                 file.write(rq.content)
         else:
-            print('FOUND: ' + keep['urlName'])
+            print('FOUND: ' + gen['urlName'])
 
-    for kill in [path + file + '.jpg' for file in existing_names
-                 if file not in preserve]:
+    # which files to delete
+    for kill in [path + file + '.jpg' for file in downloaded_gens
+                 if file not in gens_to_save]:
         print('Delete{}: {}'.format(' (not really)'
                                     if not prune else '', kill))
         if prune:
@@ -145,7 +146,9 @@ def save_generators(generators, path, prune=False):
 
 
 def validate_meme_text(text):
-    """ NO RUSSIAN, GREEK, ETC.
+    """ Validate text as usable, e.g. Latin characters
+
+    # TODO: maybe more?
 
     >>> validate_meme_text('Ω')
     False
@@ -161,18 +164,36 @@ def validate_meme_text(text):
     return valid
 
 
-def cull_generators(generators):
-    """ Cull generators to the most popular """
-    cull_index = min(len(generators), 15)
+def cull_generators(generators, max_size):
+    """ Cull generators to the most popular, based on ranking
+
+    Doctest 1:
+    Returned list should have only 5 items
+    Last generator should have ranking: 1, i.e. be first in culled list
+
+    Doctest 2:
+    Do not return more generators than available.
+    >>> gens = {}
+    >>> for i in range(10): gens[i] = {'ranking': 10 - i, 'urlName': 0, 'imageUrl': 0}
+    >>> gens = cull_generators(gens, 5)
+    >>> len(gens) - gens[0]['ranking']
+    4
+    >>> gens = {}
+    >>> for i in range(10): gens[i] = {'ranking': 10 - i, 'urlName': 0, 'imageUrl': 0}
+    >>> len(cull_generators(gens, 15))
+    10
+    """
+    cull_index = min(len(generators), max_size)
     cull_gens = sorted(
         [
-            {'urlName': val['urlName'], 'imageUrl': val['imageUrl'], 'ranking': val['ranking']}
-            for key, val in generators.items()
+            {'urlName': val['urlName'],
+             'imageUrl': val['imageUrl'],
+             'ranking': val['ranking']} for key, val in generators.items()
         ],
-        key=itemgetter('ranking')
-    )[:cull_index]
+        key=itemgetter('ranking'))
 
-    return cull_gens
+    return cull_gens[:cull_index]
+
 
 def save_image(image, image_name):
     file_name = str(image_name).replace('input/', '')
@@ -180,6 +201,7 @@ def save_image(image, image_name):
     if not os.path.exists('output'):
         os.makedirs('output')
     image.save(output_name)
+
 
 if __name__ == '__main__':
     print(main())
