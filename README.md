@@ -18,8 +18,8 @@ and captures the zeitgeist of the memisphere.
 Using Markov processing, MemeBot takes this data and generates fresh material.
 Now Jules isn't just browsing dank memes: Jules is creating OC!
 
-### The golden meme
-Is our MemeBots learning? Of course!
+### Finding the golden meme
+Is our MemeBots learning? You bet it are!
 Jules is able to review these *rare* memes and teach it which ones
 are **dank** and which are just plain **stank**.
 
