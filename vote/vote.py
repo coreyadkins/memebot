@@ -76,13 +76,7 @@ class MemeVote:
         for item in items:
             tally[item] = len([x for x in searches if item in x])
 
-        least = []
-        while len(least) < num and len(least) <= len(items):
-            maxvotes = max(tally.items(), key=itemgetter(1))[1]
-            key = min(tally.items(), key=itemgetter(1))[0]
-            least.append(key)
-            tally[key] = maxvotes + 1
-
+        least = [t[0] for t in sorted(tally.items(), key=itemgetter(1))[:num]]
         return least
 
     def _raw_query(self, query):
