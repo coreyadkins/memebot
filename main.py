@@ -1,4 +1,5 @@
-"""Main."""
+"""Main. Grabs two images out of the populated input database, and then lanches the GUI to have user compare two images,
+and finally stores the result of the voting. Run after running initialize.py, which populates the input database."""
 
 from randomfile import get_random_input_file
 from gui import DankOrStank

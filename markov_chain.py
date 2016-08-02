@@ -13,14 +13,14 @@ class Markov(object):
     def __init__(self, open_file):
         r"""Initiates the Markov chain.
 
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> b = list(a.cache.items())
         >>> sorted(b)
         [(('This', 'is'), ['a']), (('is', 'a'), ['test.'])]
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> a.words
         ['This', 'is', 'a', 'test.']
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> a.word_size
         4
         """
@@ -33,14 +33,14 @@ class Markov(object):
     def __repr__(self):
         """Represents the Markov chain...
 
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> b = list(a.cache.items())
         >>> sorted(b)
         [(('This', 'is'), ['a']), (('is', 'a'), ['test.'])]
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> a.words
         ['This', 'is', 'a', 'test.']
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> a.word_size
         4
         """
@@ -50,12 +50,12 @@ class Markov(object):
     def __eq__(self, other):
         r"""Defines equality in Markov Objects.
 
-        >>> a = Markov(open('test.txt'))
-        >>> b = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
+        >>> b = Markov(open('test/test.txt'))
         >>> a == b
         True
-        >>> a = Markov(open('test.txt'))
-        >>> b = Markov(open('not_test.txt'))
+        >>> a = Markov(open('test/test.txt'))
+        >>> b = Markov(open('test/not_test.txt'))
         >>> a == b
         False
         """
@@ -65,7 +65,7 @@ class Markov(object):
     def file_to_words(self):
         """Opens a text file and splits all the words into a list.
 
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> a.file_to_words()
         ['This', 'is', 'a', 'test.']
         """
@@ -77,7 +77,7 @@ class Markov(object):
     def triples(self):
         """Generates triples (3-grams) from the given data string.
 
-        >>> a = Markov(open('test.txt'))
+        >>> a = Markov(open('test/test.txt'))
         >>> b = a.triples()
         >>> list(b)
         [('This', 'is', 'a'), ('is', 'a', 'test.')]
