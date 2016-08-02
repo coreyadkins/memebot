@@ -2,6 +2,8 @@
 
 import sqlite3
 import os.path
+from operator import itemgetter
+# from itertools import groupby
 
 class MemeVote:
     """ Wrapper for various voting DB functionality """
@@ -41,8 +43,8 @@ class MemeVote:
         >>> v = MemeVote(test_mode=True)
         >>> v.create_schema()
         >>> v.vote('foo', 'bar', 'bar')
-        >>> v.get_votes()
-        ('foo', 'bar', 'bar')
+        >>> v.get_votes()[0]['meme1'] + v.get_votes()[0]['winner']
+        'foobar'
         """
         votes = []
         with sqlite3.connect(self._get_db_path()) as connection:
@@ -57,6 +59,42 @@ class MemeVote:
                 votes.append({'meme1': maymay[0], 'meme2': maymay[1], 'winner': maymay[2]})
 
         return votes
+
+    def group_by(self, iterable, key):
+        """Place each item in an iterable into a bucket based on calling the key
+        function on the item."""
+        group_to_items = {}
+        for item in iterable:
+            group = key[item]
+            if group not in group_to_items:
+                group_to_items[group] = []
+            group_to_items[group].append(item)
+        return group_to_items
+
+    def get_least_voted(self, items, num=2):
+        """ Select (num) number of the least-voted instances
+
+        >>> v = MemeVote(test_mode=True)
+        >>> v.vote('alpha', 'beta', 'alpha')
+        >>> v.vote('beta', 'gamma', 'gamma')
+        >>> v.vote('gamma', 'delta', 'gamma')
+        >>> v.vote('alpha', 'gamma', 'alpha')
+        >>> v.least_voted(['alpha', 'beta', 'gamma', 'delta', 'omega'])
+        ['omega', 'delta']
+        """
+        searches = [vote['meme1'] + '|' + vote['meme2'] for vote in self.get_votes()]
+        tally = {}
+        for item in items:
+            tally[item] = len([x for x in searches if item in x])
+
+        least = []
+        while len(least) < num and len(least) <= len(items):
+            maxvotes = max(tally.items(), key=itemgetter(1))[1]
+            key = min(tally.items(), key=itemgetter(1))[0]
+            least.append(key)
+            tally[key] = maxvotes + 1
+
+        return least
 
     def _raw_query(self, query):
         """ Execute a raw query
@@ -89,3 +127,4 @@ class MemeVote:
             cursor.execute('CREATE TABLE votes(meme1 TEXT, meme2 TEXT, winner TEXT)')
 
             connection.commit()
+

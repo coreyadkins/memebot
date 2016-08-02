@@ -1,9 +1,9 @@
 """Main."""
 
-from randomfile import get_random_input_file
 from gui import DankOrStank
 import tkinter as tk
 from vote.vote import MemeVote
+import os
 
 
 def run_gui(meme_1, meme_2):
@@ -16,15 +16,15 @@ def run_gui(meme_1, meme_2):
 
 
 def main():
+    """ main """
     gui_quit = False
     while gui_quit is False:
-        image_1 = get_random_input_file(dir='output')
-        image_2 = image_1
-        while image_2 == image_1:
-            image_2 = get_random_input_file(dir='output')
-        winner, gui_quit = run_gui(image_1, image_2)
+        files = ['output/' + x for x in os.listdir('output') if x[-4:] == '.jpg']
+        images = MemeVote().get_least_voted(files)
+
+        winner, gui_quit = run_gui(images[0], images[1])
         if not gui_quit:
-            MemeVote().vote(image_1, image_2, winner)
+            MemeVote().vote(images[0], images[1], winner)
 
 
 if __name__ == '__main__':
