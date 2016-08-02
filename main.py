@@ -19,12 +19,12 @@ def main():
     """ main """
     gui_quit = False
     while gui_quit is False:
-        files = ['output/' + x for x in os.listdir('output') if x[-4:] == '.jpg']
-        images = MemeVote().get_least_voted(files)
+        all_insts = ['output/' + x for x in os.listdir('output') if x[-4:] == '.jpg']
+        use_insts = MemeVote().get_least_voted(all_insts)
 
-        winner, gui_quit = run_gui(images[0], images[1])
+        winner, gui_quit = run_gui(use_insts[0], use_insts[1])
         if not gui_quit:
-            MemeVote().vote(images[0], images[1], winner)
+            MemeVote().vote(use_insts[0], use_insts[1], winner)
 
 
 if __name__ == '__main__':
